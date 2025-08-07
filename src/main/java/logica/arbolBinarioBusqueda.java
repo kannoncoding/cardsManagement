@@ -96,8 +96,6 @@ public class ArbolBinarioBusqueda {
         }
     }
     
-
-    // eliminación
     
 
 public String eliminar(int id) {
@@ -124,7 +122,7 @@ private Nodo eliminarRec(Nodo actual, int id, ResultadoEliminacion resultado, No
     } else if (id > actual.getTarjeta().getId()) {
         actual.setDerecho(eliminarRec(actual.getDerecho(), id, resultado, actual, false));
     } else {
-        // Encontró el nodo a eliminar
+        // Encontro el nodo a eliminar
         String categoria = actual.getTarjeta().getCategoria();
         if (categoria.equalsIgnoreCase("Civiles")) {
             resultado.mensaje = "No se permite eliminar tarjetas de Civiles.";
@@ -163,6 +161,63 @@ private Nodo eliminarRec(Nodo actual, int id, ResultadoEliminacion resultado, No
     return actual;
 }
 
-    
-    // eliminación, contar nodos, buscar mayor/menor
+// Contar nodos de categoría “Súper héroes” o “Súper villanos”
+
+public int contarSuperheroesOVillanos() {
+    return contarSuperheroesOVillanosRec(raiz);
+}
+
+private int contarSuperheroesOVillanosRec(Nodo actual) {
+    if (actual == null) return 0;
+    String categoria = actual.getTarjeta().getCategoria();
+    int suma = 0;
+    if (categoria.equalsIgnoreCase("Súper héroes") || categoria.equalsIgnoreCase("Súper villanos")) {
+        suma = 1;
+    }
+    return suma 
+        + contarSuperheroesOVillanosRec(actual.getIzquierdo()) 
+        + contarSuperheroesOVillanosRec(actual.getDerecho());
+}
+
+
+// Listar descripciones de nodos hoja de categoría “Frases icónicas”
+public String listarFrasesIconicasHojas() {
+    StringBuilder sb = new StringBuilder();
+    listarFrasesIconicasHojasRec(raiz, sb);
+    return sb.toString();
+}
+
+private void listarFrasesIconicasHojasRec(Nodo actual, StringBuilder sb) {
+    if (actual != null) {
+        boolean esHoja = (actual.getIzquierdo() == null && actual.getDerecho() == null);
+        String categoria = actual.getTarjeta().getCategoria();
+        if (esHoja && categoria.equalsIgnoreCase("Frases icónicas")) {
+            sb.append(actual.getTarjeta().getDescripcion()).append("\n");
+        }
+        listarFrasesIconicasHojasRec(actual.getIzquierdo(), sb);
+        listarFrasesIconicasHojasRec(actual.getDerecho(), sb);
+    }
+}
+
+// Encontrar el nodo con el Id menor y mayor
+    public Tarjeta obtenerTarjetaMenorId() {
+    if (raiz == null) return null;
+    Nodo actual = raiz;
+    while (actual.getIzquierdo() != null) {
+        actual = actual.getIzquierdo();
+    }
+    return actual.getTarjeta();
+}
+
+    public Tarjeta obtenerTarjetaMayorId() {
+    if (raiz == null) return null;
+    Nodo actual = raiz;
+    while (actual.getDerecho() != null) {
+        actual = actual.getDerecho();
+    }
+    return actual.getTarjeta();
+}
+
+
+
 }
