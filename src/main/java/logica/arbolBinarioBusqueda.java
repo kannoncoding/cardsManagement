@@ -8,6 +8,6 @@ package logica;
  *
  * @author Pegasus Onr
  */
-public class arbolBinarioBusqueda {
+public class ArbolBinarioBusqueda {
     
 }

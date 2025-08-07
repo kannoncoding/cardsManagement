@@ -1,12 +1,12 @@
 package modelo;
 
-public class tarjeta {
+public class Tarjeta {
     private int id;
     private String descripcion;
     private String categoria;
 
     // Constructor
-    public tarjeta(int id, String descripcion, String categoria) {
+    public Tarjeta(int id, String descripcion, String categoria) {
         this.id = id;
         this.descripcion = descripcion;
         this.categoria = categoria;

@@ -8,6 +8,6 @@ package gui;
  *
  * @author Pegasus Onr
  */
-public class menuPrincipal {
+public class MenuPrincipal {
     
 }
