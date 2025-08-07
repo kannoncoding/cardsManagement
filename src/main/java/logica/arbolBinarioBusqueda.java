@@ -95,6 +95,74 @@ public class ArbolBinarioBusqueda {
             sb.append(actual.getTarjeta().getId()).append("-");
         }
     }
+    
 
+    // eliminación
+    
+
+public String eliminar(int id) {
+    ResultadoEliminacion resultado = new ResultadoEliminacion();
+    raiz = eliminarRec(raiz, id, resultado, null, false);
+    return resultado.mensaje;
+}
+
+// Clase interna para comunicar resultado y mensaje
+private class ResultadoEliminacion {
+    String mensaje = "Nodo no encontrado.";
+    boolean eliminado = false;
+}
+
+
+ // Método recursivo para eliminar un nodo, actualizando enlaces.
+
+private Nodo eliminarRec(Nodo actual, int id, ResultadoEliminacion resultado, Nodo padre, boolean esIzquierdo) {
+    if (actual == null) {
+        return null;
+    }
+    if (id < actual.getTarjeta().getId()) {
+        actual.setIzquierdo(eliminarRec(actual.getIzquierdo(), id, resultado, actual, true));
+    } else if (id > actual.getTarjeta().getId()) {
+        actual.setDerecho(eliminarRec(actual.getDerecho(), id, resultado, actual, false));
+    } else {
+        // Encontró el nodo a eliminar
+        String categoria = actual.getTarjeta().getCategoria();
+        if (categoria.equalsIgnoreCase("Civiles")) {
+            resultado.mensaje = "No se permite eliminar tarjetas de Civiles.";
+            return actual;
+        }
+
+        boolean tieneIzq = (actual.getIzquierdo() != null);
+        boolean tieneDer = (actual.getDerecho() != null);
+
+        // Caso: hoja
+        if (!tieneIzq && !tieneDer) {
+            resultado.mensaje = "Nodo hoja eliminado correctamente.";
+            resultado.eliminado = true;
+            return null;
+        }
+
+        // Caso: solo hijo izquierdo
+        if (tieneIzq && !tieneDer) {
+            resultado.mensaje = "Nodo con solo hijo izquierdo eliminado correctamente.";
+            resultado.eliminado = true;
+            return actual.getIzquierdo();
+        }
+
+        // Caso: solo hijo derecho
+        if (!tieneIzq && tieneDer) {
+            resultado.mensaje = "No se puede eliminar el nodo porque solo tiene un subárbol a su derecha.";
+            return actual;
+        }
+
+        // Caso: dos hijos
+        if (tieneIzq && tieneDer) {
+            resultado.mensaje = "No se puede eliminar el nodo porque tiene dos hijos.";
+            return actual;
+        }
+    }
+    return actual;
+}
+
+    
     // eliminación, contar nodos, buscar mayor/menor
 }
