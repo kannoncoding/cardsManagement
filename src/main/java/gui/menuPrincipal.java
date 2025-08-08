@@ -40,6 +40,16 @@ private void limpiarResultados() {
     txtResultados.setText("");
 }
 
+private void limpiarEntradas() {
+    txtId.setText("");
+    txtDescripcion.setText("");
+    if (cmbCategoria.getItemCount() > 0) {
+        cmbCategoria.setSelectedIndex(0); 
+    }
+    txtId.requestFocusInWindow(); 
+}
+
+
 // ---------- Conectar eventos de botones ----------
 private void configurarEventos() {
     btnInsertar.addActionListener(e -> onInsertar());
@@ -68,14 +78,22 @@ private void onInsertar() {
 
     String cat = leerCategoria();
 
-    // Si tu Tarjeta no tiene este constructor, dímelo y lo cambio a setters.
+    
     Tarjeta t = new Tarjeta(id, desc, cat);
 
     try {
         boolean ok = arbol.insertar(t);
         if (ok) {
             mostrar("Insertada tarjeta Id=" + id + " (" + cat + ")");
-            panelGrafico.repaint(); // para 4.3
+            panelGrafico.repaint();
+            if (ok) {
+    mostrar("Insertada tarjeta Id=" + id + " (" + cat + ")");
+    panelGrafico.repaint();
+    limpiarEntradas();         
+} else {
+    mostrar("No se pudo insertar: Id duplicado (" + id + ").");
+}
+
         } else {
             mostrar("No se pudo insertar: Id duplicado (" + id + ").");
         }
@@ -90,10 +108,11 @@ private void onEliminar() {
     if (id == null) { mostrar("ERROR: Debes digitar un Id numérico."); return; }
 
     try {
-        // TU árbol devuelve el mensaje de la operación
+    
         String mensaje = arbol.eliminar(id);
         mostrar(mensaje);
-        panelGrafico.repaint(); // para 4.3
+        panelGrafico.repaint();
+        limpiarEntradas();
     } catch (Exception ex) {
         mostrar("ERROR al eliminar: " + ex.getMessage());
     }
@@ -128,7 +147,7 @@ private void onRecorrido(String tipo) {
             case "POST" -> lista = arbol.recorridoPostorden();
             default     -> throw new IllegalArgumentException("Tipo de recorrido inválido");
         }
-        // El árbol devuelve con guiones y suele terminar en "-"
+     
         if (lista == null) lista = "";
         if (lista.endsWith("-")) lista = lista.substring(0, lista.length()-1);
         mostrar("Recorrido " + tipo + ": " + lista);
@@ -150,7 +169,7 @@ private void onCantidadHV() {
 private void onListarHojas() {
     limpiarResultados();
     try {
-        String lista = arbol.listarFrasesIconicasHojas(); // asumo viene formateado (ej: separados por saltos o comas)
+        String lista = arbol.listarFrasesIconicasHojas();
         if (lista == null || lista.isBlank()) {
             mostrar("No hay nodos hoja de la categoría 'Frases icónicas'.");
         } else {
