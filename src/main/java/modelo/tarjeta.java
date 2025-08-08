@@ -1,3 +1,8 @@
+// Universidad Estatal a Distancia (UNED)
+// II Cuatrimestre 2025
+// Estructura de Datos - Proyecto 3
+// Jorge Luis Arias Melendez
+
 package modelo;
 
 public class Tarjeta {
