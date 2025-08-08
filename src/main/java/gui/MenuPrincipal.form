@@ -237,6 +237,10 @@
       </Properties>
     </Component>
     <Container class="javax.swing.JPanel" name="panelGrafico">
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new PanelArbol()"/>
+        <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value=""/>
+      </AuxValues>
 
       <Layout>
         <DimensionLayout dim="0">

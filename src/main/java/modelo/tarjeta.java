@@ -37,7 +37,7 @@ public class Tarjeta {
         this.categoria = categoria;
     }
 
-    // ToString para mostrar información fácilmente
+    // ToString para mostrar información
     @Override
     public String toString() {
         return "ID: " + id + ", Descripción: " + descripcion + ", Categoría: " + categoria;

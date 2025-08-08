@@ -14,7 +14,7 @@ public class Nodo {
         this.derecho = null;
     }
 
-    // Getters y Setters
+    // -------- Getters / Setters --------
     public Tarjeta getTarjeta() {
         return tarjeta;
     }
@@ -37,5 +37,10 @@ public class Nodo {
 
     public void setDerecho(Nodo derecho) {
         this.derecho = derecho;
+    }
+
+    // (Opcional, útil en eliminaciones/dibujo)
+    public boolean esHoja() {
+        return izquierdo == null && derecho == null;
     }
 }

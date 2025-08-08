@@ -13,6 +13,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
         initComponents();
         configurarUI(); 
         configurarEventos();
+        ((PanelArbol) panelGrafico).setArbol(arbol);
         
     }
     
@@ -44,9 +45,9 @@ private void limpiarEntradas() {
     txtId.setText("");
     txtDescripcion.setText("");
     if (cmbCategoria.getItemCount() > 0) {
-        cmbCategoria.setSelectedIndex(0); // o -1 si quieres sin selección
+        cmbCategoria.setSelectedIndex(0); 
     }
-    txtId.requestFocusInWindow(); // comodidad para siguiente alta
+    txtId.requestFocusInWindow(); 
 }
 
 
@@ -78,7 +79,7 @@ private void onInsertar() {
 
     String cat = leerCategoria();
 
-    // Si tu Tarjeta no tiene este constructor, dímelo y lo cambio a setters.
+
     Tarjeta t = new Tarjeta(id, desc, cat);
 
     try {
@@ -101,7 +102,7 @@ private void onEliminar() {
     if (id == null) { mostrar("ERROR: Debes digitar un Id numérico."); return; }
 
     try {
-        // TU árbol devuelve el mensaje de la operación
+  
         String mensaje = arbol.eliminar(id);
         mostrar(mensaje);
         panelGrafico.repaint();
@@ -140,7 +141,7 @@ private void onRecorrido(String tipo) {
             case "POST" -> lista = arbol.recorridoPostorden();
             default     -> throw new IllegalArgumentException("Tipo de recorrido inválido");
         }
-        // El árbol devuelve con guiones y suele terminar en "-"
+
         if (lista == null) lista = "";
         if (lista.endsWith("-")) lista = lista.substring(0, lista.length()-1);
         mostrar("Recorrido " + tipo + ": " + lista);
@@ -162,7 +163,7 @@ private void onCantidadHV() {
 private void onListarHojas() {
     limpiarResultados();
     try {
-        String lista = arbol.listarFrasesIconicasHojas(); // asumo viene formateado (ej: separados por saltos o comas)
+        String lista = arbol.listarFrasesIconicasHojas(); 
         if (lista == null || lista.isBlank()) {
             mostrar("No hay nodos hoja de la categoría 'Frases icónicas'.");
         } else {
@@ -204,7 +205,7 @@ private void onMayorMenor() {
 }
     
     private void configurarUI() {
-    // categorías válidas
+  
     String[] categorias = {
         "Civiles", "Equipos", "Súper héroes", "Objetos", "Súper villanos",
         "Paneles", "Cara a cara", "Frases icónicas", "Película especial"
@@ -271,7 +272,7 @@ private void aplicarFiltroNumerico(javax.swing.JTextField campo) {
         jScrollPane2 = new javax.swing.JScrollPane();
         txtResultados = new javax.swing.JTextArea();
         jLabel5 = new javax.swing.JLabel();
-        panelGrafico = new javax.swing.JPanel();
+        panelGrafico = new PanelArbol();
         btnCantidadHV = new javax.swing.JButton();
         btnListarHojas = new javax.swing.JButton();
         btnMayorMenor = new javax.swing.JButton();

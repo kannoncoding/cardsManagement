@@ -1,6 +1,7 @@
 package logica;
 
 import modelo.Tarjeta;
+import java.awt.*;
 
 public class ArbolBinarioBusqueda {
     private Nodo raiz;
@@ -52,7 +53,7 @@ public class ArbolBinarioBusqueda {
         else return buscarRec(actual.getDerecho(), id);
     }
 
-    // Recorridos (Preorden, Inorden, Postorden) - Solo las firmas, puedes completarlas luego
+    // Recorridos (Preorden, Inorden, Postorden)
 
     public String recorridoPreorden() {
         StringBuilder sb = new StringBuilder();
@@ -217,6 +218,87 @@ private void listarFrasesIconicasHojasRec(Nodo actual, StringBuilder sb) {
     }
     return actual.getTarjeta();
 }
+    
+   //metodo de dibujar START
+    
+    public void dibujar(Graphics2D g, int width, int height) {
+    final int RADIO = 18;   
+    final int V_SP  = 70;   
+
+    if (raiz == null) { 
+        g.setColor(Color.LIGHT_GRAY);
+        g.setFont(g.getFont().deriveFont(Font.PLAIN, 16f));
+        String msg = "Árbol vacío";
+        FontMetrics fm = g.getFontMetrics();
+        g.drawString(msg, (width - fm.stringWidth(msg)) / 2, height / 2);
+        return;
+    }
+
+    // punto inicial y separación horizontal inicial
+    int x0 = width / 2;
+    int y0 = 40;
+    int dx0 = Math.max(width / 4, RADIO * 3);
+
+    dibujarNodo(g, raiz, x0, y0, dx0, V_SP, RADIO, width);
+}
+
+private void dibujarNodo(Graphics2D g, Nodo nodo, int x, int y, int dx, int vsp, int r, int width) {
+    if (nodo == null) return;
+
+    // reducción progresiva de separación horizontal
+    int nextDx = Math.max(dx / 2, r * 2 + 10);
+
+    // Dibuja primero enlaces para que queden debajo de los nodos
+    Nodo izq = nodo.getIzquierdo();
+    Nodo der = nodo.getDerecho();
+
+    if (izq != null) {
+        int cx = x - dx;
+        int cy = y + vsp;
+        cx = clamp(cx, r + 2, width - (r + 2));   // evita salirse del panel
+        g.setColor(new Color(180, 180, 180));
+        g.setStroke(new BasicStroke(2f));
+        g.drawLine(x, y, cx, cy);
+        dibujarNodo(g, izq, cx, cy, nextDx, vsp, r, width);
+    }
+
+    if (der != null) {
+        int cx = x + dx;
+        int cy = y + vsp;
+        cx = clamp(cx, r + 2, width - (r + 2));
+        g.setColor(new Color(180, 180, 180));
+        g.setStroke(new BasicStroke(2f));
+        g.drawLine(x, y, cx, cy);
+        dibujarNodo(g, der, cx, cy, nextDx, vsp, r, width);
+    }
+
+    // Dibuja el nodo (círculo + id centrado)
+    int d  = r * 2;
+    int nx = x - r;
+    int ny = y - r;
+
+    g.setColor(new Color(240, 248, 255)); // relleno
+    g.fillOval(nx, ny, d, d);
+
+    g.setColor(new Color(50, 90, 160));   // borde
+    g.setStroke(new BasicStroke(2f));
+    g.drawOval(nx, ny, d, d);
+
+    String texto = String.valueOf(nodo.getTarjeta().getId());
+    g.setFont(g.getFont().deriveFont(Font.BOLD, 12f));
+    FontMetrics fm = g.getFontMetrics();
+    int tx = x - fm.stringWidth(texto) / 2;
+    int ty = y + (fm.getAscent() - fm.getDescent()) / 2;
+    g.setColor(Color.BLACK);
+    g.drawString(texto, tx, ty);
+}
+
+// utilidad para no “salirse“ horizontalmente
+private int clamp(int val, int min, int max) {
+    return Math.max(min, Math.min(max, val));
+}
+    
+    //metodo de dibujar END
 
 
 
