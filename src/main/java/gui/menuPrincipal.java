@@ -12,8 +12,128 @@ public class MenuPrincipal extends javax.swing.JFrame {
     public MenuPrincipal() {
         initComponents();
         configurarUI(); 
+        configurarEventos();
         
     }
+    
+    // ---------- Helpers de lectura/salida ----------
+private Integer leerId() {
+    try { return Integer.parseInt(txtId.getText().trim()); }
+    catch (Exception e) { return null; }
+}
+
+private String leerDescripcion() {
+    return txtDescripcion.getText().trim();
+}
+
+private String leerCategoria() {
+    return (String) cmbCategoria.getSelectedItem();
+}
+
+private void mostrar(String msg) {
+    txtResultados.append(msg + System.lineSeparator());
+    // autoscroll
+    txtResultados.setCaretPosition(txtResultados.getDocument().getLength());
+}
+
+private void limpiarResultados() {
+    txtResultados.setText("");
+}
+
+// ---------- Conectar eventos de botones ----------
+private void configurarEventos() {
+    btnInsertar.addActionListener(e -> onInsertar());
+    btnEliminar.addActionListener(e -> onEliminar());
+    btnBuscar.addActionListener(e -> onBuscar());
+
+    btnPreorden.addActionListener(e -> onRecorrido("PRE"));
+    btnInorden.addActionListener(e -> onRecorrido("IN"));
+    btnPostorden.addActionListener(e -> onRecorrido("POST"));
+
+    btnGraficar.addActionListener(e -> panelGrafico.repaint());
+}
+
+// ---------- Acciones ----------
+private void onInsertar() {
+    limpiarResultados();
+    Integer id = leerId();
+    if (id == null) { mostrar("ERROR: Debes digitar un Id numérico."); return; }
+
+    String desc = leerDescripcion();
+    if (desc.isBlank()) { mostrar("ERROR: La descripción es obligatoria."); return; }
+
+    String cat = leerCategoria();
+
+    // Si tu Tarjeta no tiene este constructor, dímelo y lo cambio a setters.
+    Tarjeta t = new Tarjeta(id, desc, cat);
+
+    try {
+        boolean ok = arbol.insertar(t);
+        if (ok) {
+            mostrar("Insertada tarjeta Id=" + id + " (" + cat + ")");
+            panelGrafico.repaint(); // para 4.3
+        } else {
+            mostrar("No se pudo insertar: Id duplicado (" + id + ").");
+        }
+    } catch (Exception ex) {
+        mostrar("ERROR al insertar: " + ex.getMessage());
+    }
+}
+
+private void onEliminar() {
+    limpiarResultados();
+    Integer id = leerId();
+    if (id == null) { mostrar("ERROR: Debes digitar un Id numérico."); return; }
+
+    try {
+        // TU árbol devuelve el mensaje de la operación
+        String mensaje = arbol.eliminar(id);
+        mostrar(mensaje);
+        panelGrafico.repaint(); // para 4.3
+    } catch (Exception ex) {
+        mostrar("ERROR al eliminar: " + ex.getMessage());
+    }
+}
+
+private void onBuscar() {
+    limpiarResultados();
+    Integer id = leerId();
+    if (id == null) { mostrar("ERROR: Debes digitar un Id numérico."); return; }
+
+    try {
+        Tarjeta t = arbol.buscar(id);
+        if (t != null) {
+            mostrar("Encontrado -> Id: " + t.getId()
+                    + " | Descripción: " + t.getDescripcion()
+                    + " | Categoría: " + t.getCategoria());
+        } else {
+            mostrar("No existe una tarjeta con Id " + id + ".");
+        }
+    } catch (Exception ex) {
+        mostrar("ERROR en búsqueda: " + ex.getMessage());
+    }
+}
+
+private void onRecorrido(String tipo) {
+    limpiarResultados();
+    try {
+        String lista;
+        switch (tipo) {
+            case "PRE"  -> lista = arbol.recorridoPreorden();
+            case "IN"   -> lista = arbol.recorridoInorden();
+            case "POST" -> lista = arbol.recorridoPostorden();
+            default     -> throw new IllegalArgumentException("Tipo de recorrido inválido");
+        }
+        // El árbol devuelve con guiones y suele terminar en "-"
+        if (lista == null) lista = "";
+        if (lista.endsWith("-")) lista = lista.substring(0, lista.length()-1);
+        mostrar("Recorrido " + tipo + ": " + lista);
+    } catch (Exception ex) {
+        mostrar("ERROR en recorrido: " + ex.getMessage());
+    }
+}
+
+
     
     
     
@@ -261,6 +381,10 @@ private void aplicarFiltroNumerico(javax.swing.JTextField campo) {
             }
         });
     }
+    
+    // --- Lógica del árbol ---
+private final ArbolBinarioBusqueda arbol = new ArbolBinarioBusqueda();
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBuscar;
