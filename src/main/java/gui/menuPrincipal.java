@@ -51,6 +51,10 @@ private void configurarEventos() {
     btnPostorden.addActionListener(e -> onRecorrido("POST"));
 
     btnGraficar.addActionListener(e -> panelGrafico.repaint());
+    
+    btnCantidadHV.addActionListener(e -> onCantidadHV());
+    btnListarHojas.addActionListener(e -> onListarHojas());
+    btnMayorMenor.addActionListener(e -> onMayorMenor());
 }
 
 // ---------- Acciones ----------
@@ -133,9 +137,59 @@ private void onRecorrido(String tipo) {
     }
 }
 
+private void onCantidadHV() {
+    limpiarResultados();
+    try {
+        int total = arbol.contarSuperheroesOVillanos();
+        mostrar("Total de tarjetas 'Súper héroes' o 'Súper villanos': " + total);
+    } catch (Exception ex) {
+        mostrar("ERROR al contar: " + ex.getMessage());
+    }
+}
 
-    
-    
+private void onListarHojas() {
+    limpiarResultados();
+    try {
+        String lista = arbol.listarFrasesIconicasHojas(); // asumo viene formateado (ej: separados por saltos o comas)
+        if (lista == null || lista.isBlank()) {
+            mostrar("No hay nodos hoja de la categoría 'Frases icónicas'.");
+        } else {
+            mostrar("Hojas (Frases icónicas): " + lista);
+        }
+    } catch (Exception ex) {
+        mostrar("ERROR al listar hojas: " + ex.getMessage());
+    }
+}
+
+private void onMayorMenor() {
+    limpiarResultados();
+    try {
+        Tarjeta menor = arbol.obtenerTarjetaMenorId();
+        Tarjeta mayor = arbol.obtenerTarjetaMayorId();
+
+        if (menor == null && mayor == null) {
+            mostrar("El árbol está vacío.");
+            return;
+        }
+        if (menor != null) {
+            mostrar("Menor Id → Id: " + menor.getId() +
+                    " | Descripción: " + menor.getDescripcion() +
+                    " | Categoría: " + menor.getCategoria());
+        } else {
+            mostrar("No se encontró tarjeta con menor Id.");
+        }
+
+        if (mayor != null) {
+            mostrar("Mayor Id → Id: " + mayor.getId() +
+                    " | Descripción: " + mayor.getDescripcion() +
+                    " | Categoría: " + mayor.getCategoria());
+        } else {
+            mostrar("No se encontró tarjeta con mayor Id.");
+        }
+    } catch (Exception ex) {
+        mostrar("ERROR al obtener menor/mayor: " + ex.getMessage());
+    }
+}
     
     private void configurarUI() {
     // categorías válidas
@@ -206,13 +260,13 @@ private void aplicarFiltroNumerico(javax.swing.JTextField campo) {
         txtResultados = new javax.swing.JTextArea();
         jLabel5 = new javax.swing.JLabel();
         panelGrafico = new javax.swing.JPanel();
+        btnCantidadHV = new javax.swing.JButton();
+        btnListarHojas = new javax.swing.JButton();
+        btnMayorMenor = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jLabel1.setText("Id:");
-
-        txtId.setForeground(new java.awt.Color(153, 153, 153));
-        txtId.setText("escriba la id de la carta");
 
         jLabel2.setText("Categoria:");
 
@@ -261,19 +315,31 @@ private void aplicarFiltroNumerico(javax.swing.JTextField campo) {
         );
         panelGraficoLayout.setVerticalGroup(
             panelGraficoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 268, Short.MAX_VALUE)
+            .addGap(0, 273, Short.MAX_VALUE)
         );
+
+        btnCantidadHV.setText("Cantidad Heroes/Villanos");
+
+        btnListarHojas.setText("Listar Hojas (Frases iconicas)  ");
+
+        btnMayorMenor.setText("Mayor/Menor Id");
+        btnMayorMenor.setActionCommand("Mayor/Menor Id");
+        btnMayorMenor.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnMayorMenorActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(panelGrafico, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(panelGrafico, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2)
+                    .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txtId, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -281,9 +347,9 @@ private void aplicarFiltroNumerico(javax.swing.JTextField campo) {
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cmbCategoria, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 147, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(btnEliminar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
@@ -292,7 +358,7 @@ private void aplicarFiltroNumerico(javax.swing.JTextField campo) {
                                 .addComponent(btnPostorden, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(31, 31, 31)
                                 .addComponent(btnGraficar, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                    .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel3)
                             .addGroup(layout.createSequentialGroup()
@@ -302,7 +368,13 @@ private void aplicarFiltroNumerico(javax.swing.JTextField campo) {
                             .addComponent(btnPreorden, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel4)
                             .addComponent(jLabel5))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(btnCantidadHV)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnListarHojas)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnMayorMenor, javax.swing.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -330,13 +402,18 @@ private void aplicarFiltroNumerico(javax.swing.JTextField campo) {
                     .addComponent(btnPostorden)
                     .addComponent(btnGraficar))
                 .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnCantidadHV)
+                    .addComponent(btnListarHojas)
+                    .addComponent(btnMayorMenor))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 50, Short.MAX_VALUE)
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel5)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(panelGrafico, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(panelGrafico, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -346,6 +423,10 @@ private void aplicarFiltroNumerico(javax.swing.JTextField campo) {
     private void cmbCategoriaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbCategoriaActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_cmbCategoriaActionPerformed
+
+    private void btnMayorMenorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMayorMenorActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnMayorMenorActionPerformed
 
     /**
      * @param args the command line arguments
@@ -388,10 +469,13 @@ private final ArbolBinarioBusqueda arbol = new ArbolBinarioBusqueda();
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBuscar;
+    private javax.swing.JButton btnCantidadHV;
     private javax.swing.JButton btnEliminar;
     private javax.swing.JButton btnGraficar;
     private javax.swing.JButton btnInorden;
     private javax.swing.JButton btnInsertar;
+    private javax.swing.JButton btnListarHojas;
+    private javax.swing.JButton btnMayorMenor;
     private javax.swing.JButton btnPostorden;
     private javax.swing.JButton btnPreorden;
     private javax.swing.JComboBox<String> cmbCategoria;
